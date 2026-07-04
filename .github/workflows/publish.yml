@@ -12,15 +12,19 @@ jobs:
           - os: windows-latest
             rid: win-x64
             binary: recuropus.exe
+            artifact_name: recuropus-windows-x64.exe
           - os: ubuntu-latest
             rid: linux-x64
-            binary: recuropus-linux-x64
+            binary: recuropus
+            artifact_name: recuropus-linux-x64
           - os: ubuntu-22.04-arm
             rid: linux-arm64
-            binary: recuropus-linux-arm
+            binary: recuropus
+            artifact_name: recuropus-linux-arm64
           - os: macos-latest
             rid: osx-arm64
-            binary: recuropus-mac-arm
+            binary: recuropus
+            artifact_name: recuropus-mac-arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -41,11 +45,14 @@ jobs:
           --self-contained true
           -p:PublishSingleFile=true
 
-      - name: Upload binary
+      - name: Rename binary
+        run: mv "publish/${{ matrix.binary }}" "publish/${{ matrix.artifact_name }}"
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: recuropus-${{ matrix.rid }}
-          path: publish/${{ matrix.binary }}
+          path: publish/${{ matrix.artifact_name }}
           if-no-files-found: error
 
   release:
@@ -62,7 +69,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: b${{ github.run_number }}
-          name: Build #${{ github.run_number }}
+          name: "Build #${{ github.run_number }}"
           prerelease: true
           files: artifacts/**/*
           generate_release_notes: true
