@@ -15,10 +15,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PublishAotCompressed" Version="1.0.5" />
     <PackageReference Include="Serilog" Version="4.3.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.8" />
   </ItemGroup>
   
+  <!-- If building on a non-Mac runner (Windows or Linux host) -->
+  <ItemGroup Condition="!'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))'">
+    <PackageReference Include="PublishAotCompressed" Version="1.0.5" />
+  </ItemGroup>
+
 </Project>
